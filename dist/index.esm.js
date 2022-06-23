@@ -5995,6 +5995,7 @@ class StablePool {
             // All values should use 1e18 fixed point
             // i.e. 1USDC => 1e18 not 1e6
             const amtScaled = scale(amount, 18);
+            if (amtScaled.eq(0)) return ZERO$1;
             const amt = SDK.StableMath._calcOutGivenIn(
                 bnum(this.amp.toString()),
                 poolPairData.allBalancesScaled.map((balance) =>
@@ -12221,7 +12222,7 @@ var vaultAbi = [
 ];
 
 const WETHADDR = {
-    1: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    1: '0xc579D1f3CF86749E05CD06f7ADe17856c2CE3126',
     3: '0xdFCeA9088c8A88A76FF74892C1457C17dfeef9C1',
     4: '0x80dD2B80FbcFB06505A301d732322e987380EcD6',
     5: '0x9A1000D492d40bfccbc03f413A48F5B6516Ec0Fd',
@@ -12230,9 +12231,10 @@ const WETHADDR = {
     42161: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
     43113: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
     43114: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
+    106: '0xc579D1f3CF86749E05CD06f7ADe17856c2CE3126',
 };
 const MULTIADDR = {
-    1: '0x653f3e6c7e2ae666c22e063d87a012c2f13ea416',
+    1: '0x105F47eB880c08a09F7CB56E6164a8D2f10D546E',
     3: '0x53c43764255c17bd724f74c4ef150724ac50a3ed',
     4: '0x42ad527de7d4e9d9d011ac45b31d8551f8fe9821',
     5: '0x3b2A02F22fCbc872AF77674ceD303eb269a46ce3',
@@ -12241,9 +12243,10 @@ const MULTIADDR = {
     42161: '0x269ff446d9892c9e19082564df3f5e8741e190a1',
     43113: '0x53FE8639203D5dfDF735C6f8949BD340Ed6800d5',
     43114: '0x653f3e6c7e2ae666c22e063d87a012c2f13ea416',
+    106: '0x105F47eB880c08a09F7CB56E6164a8D2f10D546E',
 };
 const VAULTADDR = {
-    1: '0xad68ea482860cd7077a5D0684313dD3a9BC70fbB',
+    1: '0x349DAFF67Fe0bcDb0BB200C13a7C4C032F0b1C86',
     3: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     4: '0xF07513C68C55A31337E3b58034b176A15Dce16eD',
     5: '0x65748E8287Ce4B9E6D83EE853431958851550311',
@@ -12252,6 +12255,7 @@ const VAULTADDR = {
     42161: '0xBA12222222228d8Ba445958a75a0704d566BF2C8',
     43113: '0x9aed52F3074ba468c6ad17822b8833210868c31b',
     43114: '0xad68ea482860cd7077a5D0684313dD3a9BC70fbB',
+    106: '0x349DAFF67Fe0bcDb0BB200C13a7C4C032F0b1C86',
 };
 // Currently only used for Polygon
 // ID of USDC Connecting Pool & USDC token address
@@ -18667,6 +18671,7 @@ const Query = {
     250: queryWithLinear,
     43114: queryWithLinear,
     43113: queryWithLinear,
+    106: queryWithLinear,
 };
 // Returns all public pools
 function fetchSubgraphPools(subgraphUrl, chainId = 1) {
@@ -19457,6 +19462,7 @@ const getPlatformId = (chainId) => {
         137: 'polygon-pos',
         43113: 'avalanche',
         43114: 'avalanche',
+        106: 'binance-smart-chain',
     };
     return mapping[chainId.toString()] || 'ethereum';
 };
@@ -19470,6 +19476,7 @@ const getNativeAssetId = (chainId) => {
         42161: 'eth',
         43113: 'avalanche-2',
         43114: 'avalanche-2',
+        106: 'bsc',
     };
     return mapping[chainId.toString()] || 'eth';
 };
