@@ -7,7 +7,7 @@ const getPlatformId = (chainId: string | number): string => {
         '137': 'polygon-pos',
         '43113': 'avalanche',
         '43114': 'avalanche',
-        '106': 'binance-smart-chain',
+        '106': 'velas',
     };
 
     return mapping[chainId.toString()] || 'ethereum';
@@ -23,7 +23,7 @@ const getNativeAssetId = (chainId: string | number): string => {
         '42161': 'eth',
         '43113': 'avalanche-2',
         '43114': 'avalanche-2',
-        '106': 'bsc',
+        '106': 'velas',
     };
 
     return mapping[chainId.toString()] || 'eth';
@@ -42,7 +42,7 @@ export async function getTokenPriceInNativeAsset(
 ): Promise<string> {
     const platformId = getPlatformId(chainId);
     const nativeAssetId = getNativeAssetId(chainId);
-    const endpoint = `https://api.coingecko.com/api/v3/simple/token_price/${platformId}?contract_addresses=${tokenAddress}&vs_currencies=${nativeAssetId}`;
+    const endpoint = `https://api.coingecko.com/api/v3/simple/token_price/velas?contract_addresses=0xabf26902fd7b624e0db40d31171ea9dddf078351&vs_currencies=$velas`;
 
     const response = await fetch(endpoint, {
         method: 'GET',
