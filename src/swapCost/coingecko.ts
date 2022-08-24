@@ -42,7 +42,7 @@ export async function getTokenPriceInNativeAsset(
 ): Promise<string> {
     const platformId = getPlatformId(chainId);
     const nativeAssetId = getNativeAssetId(chainId);
-    const endpoint = `https://api.coingecko.com/api/v3/simple/token_price/velas?contract_addresses=0xabf26902fd7b624e0db40d31171ea9dddf078351&vs_currencies=$velas`;
+    const endpoint = `https://api.coingecko.com/api/v3/simple/token_price/${platformId}?contract_addresses=${tokenAddress}&vs_currencies=${nativeAssetId}`;
 
     const response = await fetch(endpoint, {
         method: 'GET',
