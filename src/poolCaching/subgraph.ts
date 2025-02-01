@@ -71,6 +71,7 @@ export const Query: { [chainId: number]: string } = {
     43114: queryWithLinear,
     43113: queryWithLinear,
     106: queryWithLinear,
+    2741: queryWithLinear,
 };
 
 // Returns all public pools

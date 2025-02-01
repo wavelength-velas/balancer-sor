@@ -8,6 +8,7 @@ const getPlatformId = (chainId: string | number): string => {
         '43113': 'avalanche',
         '43114': 'avalanche',
         '106': 'velas',
+        '2741': 'abstract',
     };
 
     return mapping[chainId.toString()] || 'ethereum';
@@ -24,6 +25,7 @@ const getNativeAssetId = (chainId: string | number): string => {
         '43113': 'avalanche-2',
         '43114': 'avalanche-2',
         '106': 'velas',
+        '2741': 'eth',
     };
 
     return mapping[chainId.toString()] || 'eth';

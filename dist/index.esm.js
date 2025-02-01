@@ -10,7 +10,7 @@ import { Contract } from '@ethersproject/contracts';
 import { Interface } from '@ethersproject/abi';
 import fetch from 'isomorphic-fetch';
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -56,6 +56,18 @@ function __awaiter(thisArg, _arguments, P, generator) {
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
+
+typeof SuppressedError === 'function'
+    ? SuppressedError
+    : function (error, suppressed, message) {
+          var e = new Error(message);
+          return (
+              (e.name = 'SuppressedError'),
+              (e.error = error),
+              (e.suppressed = suppressed),
+              e
+          );
+      };
 
 var commonjsGlobal =
     typeof globalThis !== 'undefined'
@@ -5131,6 +5143,19 @@ function _derivativeSpotPriceAfterSwapTokenInForExactTokenOut$5(
 }
 
 class WeightedPool {
+    static fromPool(pool) {
+        if (!pool.totalWeight)
+            throw new Error('WeightedPool missing totalWeight');
+        return new WeightedPool(
+            pool.id,
+            pool.address,
+            pool.swapFee,
+            pool.totalWeight,
+            pool.totalShares,
+            pool.tokens,
+            pool.tokensList
+        );
+    }
     constructor(
         id,
         address,
@@ -5150,19 +5175,6 @@ class WeightedPool {
         this.tokens = tokens;
         this.tokensList = tokensList;
         this.totalWeight = parseFixed(totalWeight, 18);
-    }
-    static fromPool(pool) {
-        if (!pool.totalWeight)
-            throw new Error('WeightedPool missing totalWeight');
-        return new WeightedPool(
-            pool.id,
-            pool.address,
-            pool.swapFee,
-            pool.totalWeight,
-            pool.totalShares,
-            pool.tokens,
-            pool.tokensList
-        );
     }
     setTypeForSwap(type) {
         this.swapPairType = type;
@@ -5877,18 +5889,6 @@ function _derivativeSpotPriceAfterSwapTokenInForExactTokenOut$4(
 }
 
 class StablePool {
-    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
-        this.poolType = PoolTypes.Stable;
-        this.MAX_IN_RATIO = parseFixed('0.3', 18);
-        this.MAX_OUT_RATIO = parseFixed('0.3', 18);
-        this.id = id;
-        this.address = address;
-        this.amp = parseFixed(amp, StablePool.AMP_DECIMALS);
-        this.swapFee = parseFixed(swapFee, 18);
-        this.totalShares = parseFixed(totalShares, 18);
-        this.tokens = tokens;
-        this.tokensList = tokensList;
-    }
     static fromPool(pool) {
         if (!pool.amp) throw new Error('StablePool missing amp factor');
         return new StablePool(
@@ -5900,6 +5900,18 @@ class StablePool {
             pool.tokens,
             pool.tokensList
         );
+    }
+    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
+        this.poolType = PoolTypes.Stable;
+        this.MAX_IN_RATIO = parseFixed('0.3', 18);
+        this.MAX_OUT_RATIO = parseFixed('0.3', 18);
+        this.id = id;
+        this.address = address;
+        this.amp = parseFixed(amp, StablePool.AMP_DECIMALS);
+        this.swapFee = parseFixed(swapFee, 18);
+        this.totalShares = parseFixed(totalShares, 18);
+        this.tokens = tokens;
+        this.tokensList = tokensList;
     }
     setTypeForSwap(type) {
         this.swapPairType = type;
@@ -6439,18 +6451,6 @@ function _derivativeSpotPriceAfterSwapTokenInForExactTokenOut$3(
 }
 
 class MetaStablePool {
-    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
-        this.poolType = PoolTypes.MetaStable;
-        this.MAX_IN_RATIO = parseFixed('0.3', 18);
-        this.MAX_OUT_RATIO = parseFixed('0.3', 18);
-        this.id = id;
-        this.address = address;
-        this.amp = parseFixed(amp, MetaStablePool.AMP_DECIMALS);
-        this.swapFee = parseFixed(swapFee, 18);
-        this.totalShares = parseFixed(totalShares, 18);
-        this.tokens = tokens;
-        this.tokensList = tokensList;
-    }
     static fromPool(pool) {
         if (!pool.amp) throw new Error('MetaStablePool missing amp factor');
         return new MetaStablePool(
@@ -6462,6 +6462,18 @@ class MetaStablePool {
             pool.tokens,
             pool.tokensList
         );
+    }
+    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
+        this.poolType = PoolTypes.MetaStable;
+        this.MAX_IN_RATIO = parseFixed('0.3', 18);
+        this.MAX_OUT_RATIO = parseFixed('0.3', 18);
+        this.id = id;
+        this.address = address;
+        this.amp = parseFixed(amp, MetaStablePool.AMP_DECIMALS);
+        this.swapFee = parseFixed(swapFee, 18);
+        this.totalShares = parseFixed(totalShares, 18);
+        this.tokens = tokens;
+        this.tokensList = tokensList;
     }
     setTypeForSwap(type) {
         this.swapPairType = type;
@@ -7451,6 +7463,28 @@ var PairTypes$1;
     PairTypes[(PairTypes['WrappedTokenToBpt'] = 5)] = 'WrappedTokenToBpt';
 })(PairTypes$1 || (PairTypes$1 = {}));
 class LinearPool {
+    static fromPool(pool) {
+        if (pool.mainIndex === undefined)
+            throw new Error('LinearPool missing mainIndex');
+        if (pool.wrappedIndex === undefined)
+            throw new Error('LinearPool missing wrappedIndex');
+        if (!pool.lowerTarget)
+            throw new Error('LinearPool missing lowerTarget');
+        if (!pool.upperTarget)
+            throw new Error('LinearPool missing upperTarget');
+        return new LinearPool(
+            pool.id,
+            pool.address,
+            pool.swapFee,
+            pool.totalShares,
+            pool.tokens,
+            pool.tokensList,
+            pool.mainIndex,
+            pool.wrappedIndex,
+            pool.lowerTarget,
+            pool.upperTarget
+        );
+    }
     constructor(
         id,
         address,
@@ -7480,28 +7514,6 @@ class LinearPool {
         this.wrappedDecimals = this.tokens[this.wrappedIndex].decimals;
         this.lowerTarget = parseFixed(lowerTarget, 18); // Wrapped token will have same decimals as underlying
         this.upperTarget = parseFixed(upperTarget, 18);
-    }
-    static fromPool(pool) {
-        if (pool.mainIndex === undefined)
-            throw new Error('LinearPool missing mainIndex');
-        if (pool.wrappedIndex === undefined)
-            throw new Error('LinearPool missing wrappedIndex');
-        if (!pool.lowerTarget)
-            throw new Error('LinearPool missing lowerTarget');
-        if (!pool.upperTarget)
-            throw new Error('LinearPool missing upperTarget');
-        return new LinearPool(
-            pool.id,
-            pool.address,
-            pool.swapFee,
-            pool.totalShares,
-            pool.tokens,
-            pool.tokensList,
-            pool.mainIndex,
-            pool.wrappedIndex,
-            pool.lowerTarget,
-            pool.upperTarget
-        );
     }
     setTypeForSwap(type) {
         this.swapPairType = type;
@@ -8461,6 +8473,26 @@ function getTimeTillExpiry(expiryTime, currentBlockTimestamp, unitSeconds) {
 }
 
 class ElementPool {
+    static fromPool(pool) {
+        if (!pool.expiryTime) throw new Error('ElementPool missing expiryTime');
+        if (!pool.unitSeconds)
+            throw new Error('ElementPool missing unitSeconds');
+        if (!pool.principalToken)
+            throw new Error('ElementPool missing principalToken');
+        if (!pool.baseToken) throw new Error('ElementPool missing baseToken');
+        return new ElementPool(
+            pool.id,
+            pool.address,
+            pool.swapFee,
+            pool.totalShares,
+            pool.tokens,
+            pool.tokensList,
+            pool.expiryTime,
+            pool.unitSeconds,
+            pool.principalToken,
+            pool.baseToken
+        );
+    }
     constructor(
         id,
         address,
@@ -8485,26 +8517,6 @@ class ElementPool {
         this.principalToken = principalToken;
         this.baseToken = baseToken;
         this.currentBlockTimestamp = 0;
-    }
-    static fromPool(pool) {
-        if (!pool.expiryTime) throw new Error('ElementPool missing expiryTime');
-        if (!pool.unitSeconds)
-            throw new Error('ElementPool missing unitSeconds');
-        if (!pool.principalToken)
-            throw new Error('ElementPool missing principalToken');
-        if (!pool.baseToken) throw new Error('ElementPool missing baseToken');
-        return new ElementPool(
-            pool.id,
-            pool.address,
-            pool.swapFee,
-            pool.totalShares,
-            pool.tokens,
-            pool.tokensList,
-            pool.expiryTime,
-            pool.unitSeconds,
-            pool.principalToken,
-            pool.baseToken
-        );
     }
     setCurrentBlockTimestamp(timestamp) {
         this.currentBlockTimestamp = timestamp;
@@ -9557,19 +9569,6 @@ var PairTypes;
     PairTypes[(PairTypes['TokenToToken'] = 2)] = 'TokenToToken';
 })(PairTypes || (PairTypes = {}));
 class PhantomStablePool {
-    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
-        this.poolType = PoolTypes.MetaStable;
-        this.ALMOST_ONE = parseFixed('0.99', 18);
-        // Used for VirutalBpt and can be removed if SG is updated with VirtualBpt value
-        this.MAX_TOKEN_BALANCE = BigNumber$1.from('2').pow('112').sub('1');
-        this.id = id;
-        this.address = address;
-        this.amp = parseFixed(amp, PhantomStablePool.AMP_DECIMALS);
-        this.swapFee = parseFixed(swapFee, 18);
-        this.totalShares = parseFixed(totalShares, 18);
-        this.tokens = tokens;
-        this.tokensList = tokensList;
-    }
     static fromPool(pool) {
         if (!pool.amp) throw new Error('PhantomStablePool missing amp factor');
         return new PhantomStablePool(
@@ -9595,6 +9594,19 @@ class PhantomStablePool {
                 poolPairDataNoBpt.tokenIndexOut -= 1;
         }
         return poolPairDataNoBpt;
+    }
+    constructor(id, address, amp, swapFee, totalShares, tokens, tokensList) {
+        this.poolType = PoolTypes.MetaStable;
+        this.ALMOST_ONE = parseFixed('0.99', 18);
+        // Used for VirutalBpt and can be removed if SG is updated with VirtualBpt value
+        this.MAX_TOKEN_BALANCE = BigNumber$1.from('2').pow('112').sub('1');
+        this.id = id;
+        this.address = address;
+        this.amp = parseFixed(amp, PhantomStablePool.AMP_DECIMALS);
+        this.swapFee = parseFixed(swapFee, 18);
+        this.totalShares = parseFixed(totalShares, 18);
+        this.tokens = tokens;
+        this.tokensList = tokensList;
     }
     setTypeForSwap(type) {
         this.swapPairType = type;
@@ -12232,6 +12244,7 @@ const WETHADDR = {
     43113: '0xd00ae08403B9bbb9124bB305C09058E32C39A48c',
     43114: '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
     106: '0xc579D1f3CF86749E05CD06f7ADe17856c2CE3126',
+    2741: '0x3439153eb7af838ad19d56e1571fbd09333c2809',
 };
 const MULTIADDR = {
     1: '0x5AaDD9826e8804b06471F7CddAEC6F306773CE63',
@@ -12244,6 +12257,7 @@ const MULTIADDR = {
     43113: '0x53FE8639203D5dfDF735C6f8949BD340Ed6800d5',
     43114: '0x653f3e6c7e2ae666c22e063d87a012c2f13ea416',
     106: '0x5AaDD9826e8804b06471F7CddAEC6F306773CE63',
+    2741: '0xD2b77D836610b672eCfA85783020F75DDB4FAFC4',
 };
 const VAULTADDR = {
     1: '0xA4A48dfcAE6490AfE9C779BF0f324B48683e488c',
@@ -12256,6 +12270,7 @@ const VAULTADDR = {
     43113: '0x9aed52F3074ba468c6ad17822b8833210868c31b',
     43114: '0xad68ea482860cd7077a5D0684313dD3a9BC70fbB',
     106: '0xA4A48dfcAE6490AfE9C779BF0f324B48683e488c',
+    2741: '0xA06e92c4A9D5Fe540666e1BFf10982d496D5A70D',
 };
 // Currently only used for Polygon
 // ID of USDC Connecting Pool & USDC token address
@@ -18672,6 +18687,7 @@ const Query = {
     43114: queryWithLinear,
     43113: queryWithLinear,
     106: queryWithLinear,
+    2741: queryWithLinear,
 };
 // Returns all public pools
 function fetchSubgraphPools(subgraphUrl, chainId = 1) {
@@ -19463,6 +19479,7 @@ const getPlatformId = (chainId) => {
         43113: 'avalanche',
         43114: 'avalanche',
         106: 'velas',
+        2741: 'abstract',
     };
     return mapping[chainId.toString()] || 'ethereum';
 };
@@ -19477,6 +19494,7 @@ const getNativeAssetId = (chainId) => {
         43113: 'avalanche-2',
         43114: 'avalanche-2',
         106: 'velas',
+        2741: 'eth',
     };
     return mapping[chainId.toString()] || 'eth';
 };
@@ -19559,16 +19577,16 @@ function calculateTotalSwapCost(tokenPriceWei, swapGas, gasPriceWei) {
     return gasPriceWei.mul(swapGas).mul(tokenPriceWei).div(WeiPerEther);
 }
 class SwapCostCalculator {
-    constructor(chainId, subgraphUrl) {
-        this.chainId = chainId;
-        this.subgraphUrl = subgraphUrl;
-        this.initializeCache();
-    }
     initializeCache() {
         this.tokenPriceCache = {
             AddressZero: '1',
             [WETHADDR[this.chainId].toLowerCase()]: '1',
         };
+    }
+    constructor(chainId, subgraphUrl) {
+        this.chainId = chainId;
+        this.subgraphUrl = subgraphUrl;
+        this.initializeCache();
     }
     /**
      * Sets the chain ID to be used when querying asset prices

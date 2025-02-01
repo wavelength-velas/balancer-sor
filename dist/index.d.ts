@@ -3,7 +3,7 @@ import { Provider } from '@ethersproject/providers';
 import { BigNumber as BigNumber$1 } from 'bignumber.js';
 import { Contract } from '@ethersproject/contracts';
 
-declare type NoNullableField<T> = {
+type NoNullableField<T> = {
     [P in keyof T]: NonNullable<T[P]>;
 };
 declare enum SwapTypes {
@@ -30,7 +30,7 @@ interface SwapOptions {
     poolTypeFilter: PoolFilter;
     forceRefresh: boolean;
 }
-declare type PoolPairBase = {
+type PoolPairBase = {
     id: string;
     address: string;
     poolType: PoolTypes;
@@ -72,14 +72,14 @@ interface SubgraphPoolBase {
     lowerTarget?: string;
     upperTarget?: string;
 }
-declare type SubgraphToken = {
+type SubgraphToken = {
     address: string;
     balance: string;
     decimals: number;
     priceRate: string;
     weight: string | null;
 };
-declare type SubgraphLatestTokenPrice = {
+type SubgraphLatestTokenPrice = {
     id: string;
     asset: string;
     pricingAsset: string;
